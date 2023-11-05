@@ -21,14 +21,14 @@ CarrotQueue is a Push-Pull Message Queue written in Java
 
 
 ##### Writing
-- The client will indicate (first x bytes == WRITE_BYTES)
-- Next x bytes are MSG_LEN
+- The first byte will have a value of **0x00** (WRITE_QUEUE)
+- Next byte represents the length of the message (MSG_LEN)
 - Next x bytes (null-terminated) are the id of the queue
-- Next MSG_LEN are the message bytes
+- Next MSG_LEN bytes represent the message
 - Broker can ACK, NOT ACK (queue full) or timeout
 
 ##### Reading
-- The client will indicate (first x bytes == READ_BYTES)
+- The first byte will have a value of **0x0F** (READ_QUEUE)
 - Next x bytes (null terminated) are the id of the queue
 - The broker will respond : first x bytes are status
 - if applicable
@@ -38,12 +38,12 @@ CarrotQueue is a Push-Pull Message Queue written in Java
 - Message will be temporarily removed from queue until ACK/NACK/Timeout -> if NACK/Timeout message is added again
 
 ##### Add queue
-- The client will indicate (first x bytes == ADD_QUEUE)
+- The first byte will have a value of **0xF0** (ADD_QUEUE)
 - Next x bytes (null terminated) are the id of the new queue
 - Broker sends message with status
 
 ##### Remove queue
-- The client will indicate (first x bytes == REMOVE_QUEUE)
+- The first byte will have a value of **0xFF** (REMOVE_QUEUE)
 - Next x bytes (null terminated) are the id of the removed queue
 - Broker sends message with status 
 - Ongoing operations are cancelled

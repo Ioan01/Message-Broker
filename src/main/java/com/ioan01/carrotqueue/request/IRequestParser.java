@@ -1,4 +1,4 @@
-package com.ioan01.carrotqueue;
+package com.ioan01.carrotqueue.request;
 
 import java.net.Socket;
 

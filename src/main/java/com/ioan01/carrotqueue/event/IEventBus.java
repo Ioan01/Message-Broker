@@ -1,4 +1,4 @@
-package com.ioan01.carrotqueue;
+package com.ioan01.carrotqueue.event;
 
 public interface IEventBus {
 
@@ -6,6 +6,4 @@ public interface IEventBus {
 
     // runner care iti proceseaza requesturi
     // threaduri idk
-
-
 }

@@ -1,8 +1,8 @@
-main\java\com\carrotqueue\IRequestParser.class
-main\java\com\carrotqueue\Request.class
-main\java\com\carrotqueue\RequestType.class
-main\java\com\carrotqueue\IEventBus.class
-main\java\com\carrotqueue\IServer.class
-main\java\com\carrotqueue\IQueueMaster.class
-main\java\com\carrotqueue\IPacketWriter.class
-main\java\com\carrotqueue\Main.class
+com\ioan01\carrotqueue\Main.class
+com\ioan01\carrotqueue\Request.class
+com\ioan01\carrotqueue\RequestType.class
+com\ioan01\carrotqueue\IServer.class
+com\ioan01\carrotqueue\IPacketWriter.class
+com\ioan01\carrotqueue\IRequestParser.class
+com\ioan01\carrotqueue\IEventBus.class
+com\ioan01\carrotqueue\IQueueMaster.class

@@ -1,4 +1,4 @@
-package main.java.com.carrotqueue;
+package com.ioan01.carrotqueue;
 // listener (1 thread) -> new client socket (1 thread / socket) -> creates new packet reader -> reads package
 
 // threadul initial e suspendat, socketul se tine

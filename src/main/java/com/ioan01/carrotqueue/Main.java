@@ -1,4 +1,4 @@
-package main.java.com.carrotqueue;
+package com.ioan01.carrotqueue;
 
 public class Main {
     public static void main(String[] args) {

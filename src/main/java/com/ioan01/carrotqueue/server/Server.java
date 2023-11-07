@@ -63,8 +63,8 @@ public class Server implements IServer {
      */
     private void Serve(Socket clientSocket) throws IOException {
         Request request = null;
-        IRequestParser requestParser = new RequestParser();
-        requestParser.ParseRequest(clientSocket);
+        IRequestParser requestParser = new RequestParser(clientSocket);
+        requestParser.parse();
 
         // This needs to be deleted
         DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());

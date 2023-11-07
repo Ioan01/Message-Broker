@@ -21,8 +21,8 @@ public class Client {
         logger.info("Connection has been established successfully.");
     }
 
-    public void write(int b) throws IOException {
-        logger.info("Sending " + Integer.toBinaryString(b) + " to server...");
+    public void write(byte[] b) throws IOException {
+        logger.info("Sending message to server...");
         dataOutputStream.write(b);
         logger.info("Message has been sent successfully.");
 

@@ -2,15 +2,47 @@ package com.ioan01.carrotqueue.request;
 
 enum RequestType
 {
-    READ,
-    WRITE,
-    MANAGE,
+    WRITE_QUEUE,
+    READ_QUEUE,
+    ADD_QUEUE,
+    REMOVE_QUEUE
 }
 
 public class Request {
-    RequestType type;
+    private RequestType type;
+    private int length;
+    private byte[] queueId;
+    private byte[] data;
 
-    int length;
+    public RequestType getType() {
+        return type;
+    }
 
-    byte[] data;
+    public void setType(RequestType type) {
+        this.type = type;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    public byte[] getQueueId() {
+        return queueId;
+    }
+
+    public void setQueueId(byte[] queueId) {
+        this.queueId = queueId;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
+    }
 }

@@ -1,20 +1,10 @@
 package com.ioan01.carrotqueue.request;
 
-import java.nio.charset.StandardCharsets;
-
-enum RequestType
-{
-    WRITE_QUEUE,
-    READ_QUEUE,
-    ADD_QUEUE,
-    REMOVE_QUEUE
-}
-
 public class Request {
     private RequestType type;
     private int length;
     private String queueId;
-    private byte[] data;
+    private String data;
 
     public RequestType getType() {
         return type;
@@ -36,15 +26,23 @@ public class Request {
         return queueId;
     }
 
-    public void setQueueId(byte[] queueId) {
-        this.queueId = new String(queueId, StandardCharsets.UTF_8);
+    public void setQueueId(String queueId) {
+        this.queueId = queueId;
     }
 
-    public byte[] getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(byte[] data) {
+    public void setData(String data) {
         this.data = data;
+    }
+
+    public static enum RequestType
+    {
+        WRITE_QUEUE,
+        READ_QUEUE,
+        ADD_QUEUE,
+        REMOVE_QUEUE
     }
 }

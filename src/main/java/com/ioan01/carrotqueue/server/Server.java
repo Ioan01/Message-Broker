@@ -4,6 +4,9 @@ import com.ioan01.carrotqueue.queue.QueueMaster;
 import com.ioan01.carrotqueue.request.IRequestParser;
 import com.ioan01.carrotqueue.request.Request;
 import com.ioan01.carrotqueue.request.RequestParser;
+import com.ioan01.carrotqueue.response.IResponseParser;
+import com.ioan01.carrotqueue.response.Response;
+import com.ioan01.carrotqueue.response.ResponseParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,12 +69,13 @@ public class Server implements IServer {
      */
     private void Serve(Socket clientSocket) throws IOException {
         IRequestParser requestParser = new RequestParser(clientSocket);
+        IResponseParser responseParser = new ResponseParser();
+
         Request request = requestParser.parse();
+        Response response = queueMaster.HandleMessage(request);
+        byte[] bytes = responseParser.handleResponse(response);
 
-        queueMaster.HandleMessage(request);
-
-        // This needs to be deleted
         DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
-        dataOutputStream.write(34);
+        dataOutputStream.write(bytes);
     }
 }

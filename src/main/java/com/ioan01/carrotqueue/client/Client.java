@@ -21,15 +21,31 @@ public class Client {
         logger.info("Connection has been established successfully.");
     }
 
-    public void write(byte[] b) throws IOException {
+    public void write(byte[] b) throws IOException, InterruptedException {
         logger.info("Sending message to server...");
         dataOutputStream.write(b);
         logger.info("Message has been sent successfully.");
 
         logger.info("Waiting for response from server.");
-        byte[] bArr = new byte[1];
-        dataInputStream.read(bArr);
-        logger.info("Received response from server: " + Integer.toBinaryString(bArr[0]));
+
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024]; // You can adjust the buffer size as needed
+
+        int bytesRead;
+        if ((bytesRead = dataInputStream.read(buffer)) != -1) {
+            baos.write(buffer, 0, bytesRead);
+        }
+
+        byte[] bArr = baos.toByteArray();
+
+        String code = bArr[0] == 0 ? "Error" : "Message";
+
+        logger.info("Received response from server: " + code);
+        if (bArr[0] != 0) {
+            logger.info("Message from server");
+            logger.info(new String(bArr, 1, bArr.length - 1));
+        }
     }
 
     public void stop() throws IOException {

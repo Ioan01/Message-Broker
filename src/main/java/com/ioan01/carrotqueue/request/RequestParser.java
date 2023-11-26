@@ -1,6 +1,6 @@
 package com.ioan01.carrotqueue.request;
 
-import com.ioan01.carrotqueue.server.Server;
+import com.ioan01.carrotqueue.response.ResponseParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,13 +10,15 @@ import java.io.IOException;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
+import static com.ioan01.carrotqueue.request.Request.RequestType;
+
 public class RequestParser implements IRequestParser {
+    private static Logger logger = LoggerFactory.getLogger(RequestParser.class);
+
     private Socket clientSocket;
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
     private Request request;
-
-    private static Logger logger = LoggerFactory.getLogger(RequestParser.class);
 
     public RequestParser(Socket clientSocket) throws IOException {
         this.clientSocket = clientSocket;
@@ -39,40 +41,46 @@ public class RequestParser implements IRequestParser {
         // Read first byte and check the message type
         byte type = dataInputStream.readByte();
 
-        if (type == 0x00) {
+        if (type == (byte)0x00) {
             logger.info("Message is of type WRITE_QUEUE.");
             request.setType(RequestType.WRITE_QUEUE);
 
             request.setLength(dataInputStream.readByte());
 
-            parseQueueId();
-            parseMessage(request.getLength());
+            request.setQueueId(parseQueueId());
+            request.setData(parseMessage(request.getLength()));
 
-            request.setData(data);
+            logger.info("Writing to ID: \'" + request.getQueueId() + "\' data: \'" +  request.getData() + "\'");
         }
-        else if (type == 0x0F) {
+        else if (type == (byte)0x0F) {
             request.setType(RequestType.READ_QUEUE);
             logger.info("Message is of type READ_QUEUE.");
 
-            parseQueueId();
+            request.setQueueId(parseQueueId());
+
+            logger.info("Reading from ID \'" + request.getQueueId() + "\'");
         }
-        else if (type == 0xF0) {
+        else if (type == (byte)0xF0) {
             request.setType(RequestType.ADD_QUEUE);
             logger.info("Message is of type ADD_QUEUE.");
 
-            parseQueueId();
+            request.setQueueId(parseQueueId());
+
+            logger.info("Creating queue \'" + request.getQueueId() + "\'");
         }
-        else if (type == 0xFF) {
+        else if (type == (byte)0xFF) {
             request.setType(RequestType.REMOVE_QUEUE);
             logger.info("Message is of type REMOVE_QUEUE.");
 
-            parseQueueId();
+            request.setQueueId(parseQueueId());
+
+            logger.info("Removing queue with ID \'" + request.getQueueId() + "\'");
         }
 
         return request;
     }
 
-    private void parseQueueId() throws IOException {
+    private String parseQueueId() throws IOException {
         byte[] data = new byte[256];
         int currentIndex = 0;
 
@@ -80,11 +88,11 @@ public class RequestParser implements IRequestParser {
             dataInputStream.read(data, currentIndex, 1);
         } while(data[currentIndex++] != 0);
 
-        request.setQueueId(data);
         logger.info("Queue ID: " + new String(data, StandardCharsets.UTF_8).substring(0, currentIndex-1));
+        return new String(data, StandardCharsets.UTF_8);
     }
 
-    private void parseMessage(int length) throws IOException {
+    private String parseMessage(int length) throws IOException {
         byte[] data = new byte[256];
         int currentIndex = 0;
 
@@ -92,7 +100,7 @@ public class RequestParser implements IRequestParser {
             dataInputStream.read(data, currentIndex++, 1);
         }
 
-        request.setData(data);
         logger.info("Data: " + new String(data, StandardCharsets.UTF_8).substring(0, currentIndex));
+        return new String(data, StandardCharsets.UTF_8);
     }
 }

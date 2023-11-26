@@ -1,5 +1,6 @@
 package com.ioan01.carrotqueue.server;
 
+import com.ioan01.carrotqueue.queue.QueueMaster;
 import com.ioan01.carrotqueue.request.IRequestParser;
 import com.ioan01.carrotqueue.request.Request;
 import com.ioan01.carrotqueue.request.RequestParser;
@@ -15,9 +16,11 @@ public class Server implements IServer {
 
     private int port;
     private ServerSocket serverSocket;
+    private QueueMaster queueMaster;
 
     public Server(int port) {
         this.port = port;
+        queueMaster = new QueueMaster();
     }
 
     /**
@@ -62,9 +65,10 @@ public class Server implements IServer {
      * Listens to incoming packets from a certain Client (Socket)
      */
     private void Serve(Socket clientSocket) throws IOException {
-        Request request = null;
         IRequestParser requestParser = new RequestParser(clientSocket);
-        requestParser.parse();
+        Request request = requestParser.parse();
+
+        queueMaster.HandleMessage(request);
 
         // This needs to be deleted
         DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());

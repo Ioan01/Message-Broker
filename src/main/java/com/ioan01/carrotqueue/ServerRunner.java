@@ -10,6 +10,7 @@ public class ServerRunner {
         try {
             server.Run();
         } catch (IOException e) {
+
             e.printStackTrace();
         }
     }

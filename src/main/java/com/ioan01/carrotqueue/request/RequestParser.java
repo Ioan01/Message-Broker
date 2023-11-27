@@ -89,7 +89,7 @@ public class RequestParser implements IRequestParser {
         } while(data[currentIndex++] != 0);
 
         logger.info("Queue ID: " + new String(data, StandardCharsets.UTF_8).substring(0, currentIndex-1));
-        return new String(data, StandardCharsets.UTF_8);
+        return new String(data, StandardCharsets.UTF_8).substring(0, currentIndex-1);
     }
 
     private String parseMessage(int length) throws IOException {
@@ -101,6 +101,6 @@ public class RequestParser implements IRequestParser {
         }
 
         logger.info("Data: " + new String(data, StandardCharsets.UTF_8).substring(0, currentIndex));
-        return new String(data, StandardCharsets.UTF_8);
+        return new String(data, StandardCharsets.UTF_8).substring(0, length-1);
     }
 }

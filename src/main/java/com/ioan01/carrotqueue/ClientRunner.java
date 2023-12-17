@@ -64,6 +64,7 @@ public class ClientRunner {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         byteArrayOutputStream.write(0xF0); // ADD_QUEUE
         byteArrayOutputStream.write(queueId);
+        byteArrayOutputStream.write(0x00);
 
         client.write(byteArrayOutputStream.toByteArray());
 

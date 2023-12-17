@@ -27,7 +27,7 @@ public class QueueMaster implements IQueueMaster {
     }
 
     private void WriteInfoToRabbit() {
-        String message = "We have " + Queues.size() + " queues\n";
+        String message = "NEW! We have " + Queues.size() + " queues\n";
 
         for (String key : Queues.keySet()) {
             message += key + "\n";

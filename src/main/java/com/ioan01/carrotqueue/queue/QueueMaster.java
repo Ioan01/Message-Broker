@@ -26,8 +26,7 @@ public class QueueMaster implements IQueueMaster {
         factory.setPassword("guest");
     }
 
-    private void WriteInfoToRabbit()
-    {
+    private void WriteInfoToRabbit() {
         String message = "We have " + Queues.size() + " queues\n";
 
         for (String key : Queues.keySet()) {
@@ -37,8 +36,8 @@ public class QueueMaster implements IQueueMaster {
         AddQueue("info");
         WriteMessage("info", message);
     }
-    private void WriteMessage(String queueId, String message)
-    {
+
+    private void WriteMessage(String queueId, String message) {
         try (Connection connection = factory.newConnection();
              Channel channel = connection.createChannel()) {
             channel.basicPublish("", queueId, null, message.getBytes());
@@ -47,37 +46,29 @@ public class QueueMaster implements IQueueMaster {
             } else {
                 System.err.println("Failed to publish message.");
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println(e);
         }
     }
 
-    private void AddQueue(String queueId)
-    {
+    private void AddQueue(String queueId) {
         try (Connection connection = factory.newConnection();
-             Channel channel = connection.createChannel()) {
+            Channel channel = connection.createChannel()) {
 
-            //Map<String, Object> args = new HashMap<>();
-            //args.put("x-message-ttl", 600000); // TTL in milliseconds
+            Map<String, Object> config = new HashMap<>();
+            config.put("x-message-ttl", 600000); // TTL in milliseconds
 
-
-            channel.queueDeclare(queueId, false, false, false, null);
-        }
-        catch (Exception e)
-        {
+            channel.queueDeclare(queueId, false, false, false, config);
+        } catch (Exception e) {
             System.out.println(e);
         }
     }
 
-    private void RemoveQueue(String queueId)
-    {
+    private void RemoveQueue(String queueId) {
         try (Connection connection = factory.newConnection();
              Channel channel = connection.createChannel()) {
             channel.queueDelete(queueId);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
     }
@@ -135,11 +126,11 @@ public class QueueMaster implements IQueueMaster {
                     }
 
                     synchronized (padlock) {
-                        
+
                         Locks.remove(queueId);
                         Queues.remove(queueId);
                         queue.setRemoved();
-                        
+
                         RemoveQueue(queueId);
                         WriteInfoToRabbit();
 

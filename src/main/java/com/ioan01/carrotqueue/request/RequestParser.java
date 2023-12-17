@@ -101,6 +101,6 @@ public class RequestParser implements IRequestParser {
         }
 
         logger.info("Data: " + new String(data, StandardCharsets.UTF_8).substring(0, currentIndex));
-        return new String(data, StandardCharsets.UTF_8).substring(0, length-1);
+        return new String(data, StandardCharsets.UTF_8).substring(0, currentIndex);
     }
 }

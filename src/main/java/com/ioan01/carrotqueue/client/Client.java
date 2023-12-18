@@ -21,14 +21,12 @@ public class Client {
         logger.info("Connection has been established successfully.");
     }
 
-    public void write(byte[] b) throws IOException, InterruptedException {
+    public void write(byte[] b) throws IOException {
         logger.info("Sending message to server...");
         dataOutputStream.write(b);
         logger.info("Message has been sent successfully.");
 
         logger.info("Waiting for response from server.");
-
-
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024]; // You can adjust the buffer size as needed
 
@@ -39,12 +37,11 @@ public class Client {
 
         byte[] bArr = baos.toByteArray();
 
-        String code = bArr[0] == 0 ? "Error" : "Message";
-
-        logger.info("Received response from server: " + code);
-        if (bArr[0] != 0) {
-            logger.info("Message from server");
-            logger.info(new String(bArr, 1, bArr.length - 1));
+        if (bArr[0] == 0) {
+            logger.info("Received response from server: " + baos.toString().substring(1));
+        }
+        else {
+            logger.error("Received response from server: " + baos.toString().substring(1));
         }
     }
 

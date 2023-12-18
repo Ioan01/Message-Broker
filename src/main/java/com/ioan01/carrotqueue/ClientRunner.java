@@ -7,16 +7,14 @@ import java.io.IOException;
 
 public class ClientRunner {
     public static void main(String[] args) throws IOException, InterruptedException {
-        Client client = new Client("localhost", 0420);
-
-        for (int i = 0; i<26; i++) {
+        for (int i = 0; i < 26; i++) {
             int id = i;
 
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        createQueue(new byte[] {(byte)(id+65)});
+                        createQueue(new byte[]{(byte) (id + 65)});
                     } catch (IOException | InterruptedException e) {
                         throw new RuntimeException(e);
                     }
@@ -25,12 +23,12 @@ public class ClientRunner {
 
             thread.start();
 
-            for (int j = 0; j<10; j++) {
+            for (int j = 0; j < 10; j++) {
                 thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            writeToQueue(new byte[] {(byte)(id+65)}, (byte)3, new byte[] {65, 66, 67});
+                            writeToQueue(new byte[]{(byte) (id + 65)}, (byte) 3, new byte[]{65, 66, 67});
                         } catch (IOException | InterruptedException e) {
                             throw new RuntimeException(e);
                         }
@@ -44,7 +42,7 @@ public class ClientRunner {
     }
 
     private static void writeToQueue(byte[] queueId, byte msgLen, byte[] msgContent) throws IOException, InterruptedException {
-        var client = new Client("localhost", 0420);
+        var client = new Client("localhost", 4200);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         byteArrayOutputStream.write(0x00); // WRITE_QUEUE
@@ -59,7 +57,7 @@ public class ClientRunner {
     }
 
     private static void createQueue(byte[] queueId) throws IOException, InterruptedException {
-        var client = new Client("localhost", 0420);
+        var client = new Client("localhost", 4200);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         byteArrayOutputStream.write(0xF0); // ADD_QUEUE

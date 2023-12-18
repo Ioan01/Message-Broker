@@ -61,19 +61,6 @@ CarrotQueue is a Push-Pull Message Queue written in Java
 ### Concurrency Issues
 - Race Conditions: When multiple consumers or producers attempt to access and modify the queues simultaneously, race conditions can occur, leading to data corruption or unexpected behavior ( if unmanaged ) 
 - Message Order: Maintaining the order of messages can be a challenge, especially when multiple consumers are processing messages concurrently, especially since clients can not acknowledge reading messages. Some messages may be processed out of order.
-- Starvation: Certain consumers or producers may not get their fair share of resources due to the first-come, first-served policy of the message broker
-
-## Installation
-
-TBA
-
-## Development
-
-TBA
-
-#### Building for source
-
-TBA
 
 
 ## License

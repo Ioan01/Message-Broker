@@ -42,4 +42,8 @@ public class MessageQueue {
             return queue.peek();
         }
     }
+
+    public int getSize() {
+        return queue.size();
+    }
 }

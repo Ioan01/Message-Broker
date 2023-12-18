@@ -33,22 +33,20 @@ public class QueueMaster implements IQueueMaster {
         factory.setPassword("guest");
     }
 
-    private void WriteInfoToRabbit() {
-        String message = "NEW! We have " + Queues.size() + " queues\n";
-
+    private void WriteInfoToRabbit(String queueId, String message) {
         for (String key : Queues.keySet()) {
             message += key + "\n";
         }
 
-        AddQueue("info");
-        WriteMessage("info", message);
+        AddQueue(queueId);
+        WriteMessage(queueId, message);
     }
 
     private void WriteMessage(String queueId, String message) {
         try (Connection connection = factory.newConnection();
              Channel channel = connection.createChannel();) {
             channel.confirmSelect();
-            channel.basicPublish("", queueId, null, message.getBytes());
+            channel.basicPublish("", queueId + "_info", null, message.getBytes());
             if (channel.waitForConfirms(5000)) {
                 logger.info("Message published successfully.");
             } else {
@@ -70,7 +68,7 @@ public class QueueMaster implements IQueueMaster {
             Map<String, Object> config = new HashMap<>();
             config.put("x-message-ttl", 600000); // TTL in milliseconds
 
-            channel.queueDeclare(queueId, false, false, false, config);
+            channel.queueDeclare(queueId + "_info", false, false, false, config);
         } catch (TimeoutException ex) {
             logger.error(ex.getMessage());
             throw new MessageBrokerException("RABBITMQ TIMEOUT ERROR");
@@ -83,7 +81,7 @@ public class QueueMaster implements IQueueMaster {
     private void RemoveQueue(String queueId) {
         try (Connection connection = factory.newConnection();
              Channel channel = connection.createChannel()) {
-            channel.queueDelete(queueId);
+            channel.queueDelete(queueId + "_info");
         } catch (TimeoutException ex) {
             logger.error(ex.getMessage());
             throw new MessageBrokerException("RABBITMQ TIMEOUT ERROR");
@@ -107,12 +105,6 @@ public class QueueMaster implements IQueueMaster {
 
                     queue.offer(message.getData());
 
-                    try {
-                        WriteMessage(queueId, message.getData());
-                    } catch (MessageBrokerException ex) {
-                        return new Response(Response.ResponseType.ERROR, ex.getMessage());
-                    }
-
                     return new Response(Response.ResponseType.SUCCESS, "MESSAGE ADDED TO QUEUE");
                 }
                 case READ_QUEUE -> {
@@ -124,6 +116,7 @@ public class QueueMaster implements IQueueMaster {
                     }
 
                     var msg = queue.poll();
+                    WriteInfoToRabbit(queueId, String.valueOf(queue.getSize()));
                     return new Response(Response.ResponseType.SUCCESS, msg);
                 }
                 case ADD_QUEUE -> {
@@ -137,8 +130,6 @@ public class QueueMaster implements IQueueMaster {
                     }
 
                     Locks.put(queueId, padlock);
-                    AddQueue(queueId);
-                    WriteInfoToRabbit();
                     return new Response(Response.ResponseType.SUCCESS, "QUEUE ADDED");
                 }
                 case REMOVE_QUEUE -> {
@@ -152,14 +143,10 @@ public class QueueMaster implements IQueueMaster {
                     }
 
                     synchronized (padlock) {
-
                         Locks.remove(queueId);
                         Queues.remove(queueId);
                         queue.setRemoved();
-
                         RemoveQueue(queueId);
-                        WriteInfoToRabbit();
-
                         return new Response(Response.ResponseType.SUCCESS, "QUEUE DELETED");
                     }
                 }

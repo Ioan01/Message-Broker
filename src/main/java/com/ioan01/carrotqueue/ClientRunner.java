@@ -41,6 +41,19 @@ public class ClientRunner {
         }
     }
 
+    private static void createQueue(byte[] queueId) throws IOException, InterruptedException {
+        var client = new Client("localhost", 4200);
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        byteArrayOutputStream.write(0xF0); // ADD_QUEUE
+        byteArrayOutputStream.write(queueId);
+        byteArrayOutputStream.write(0x00);
+
+        client.write(byteArrayOutputStream.toByteArray());
+
+        client.stop();
+    }
+
     private static void writeToQueue(byte[] queueId, byte msgLen, byte[] msgContent) throws IOException, InterruptedException {
         var client = new Client("localhost", 4200);
 
@@ -56,16 +69,9 @@ public class ClientRunner {
         client.stop();
     }
 
-    private static void createQueue(byte[] queueId) throws IOException, InterruptedException {
+    private static void readQueue(byte[] queueId) throws IOException {
         var client = new Client("localhost", 4200);
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        byteArrayOutputStream.write(0xF0); // ADD_QUEUE
-        byteArrayOutputStream.write(queueId);
-        byteArrayOutputStream.write(0x00);
 
-        client.write(byteArrayOutputStream.toByteArray());
-
-        client.stop();
     }
 }

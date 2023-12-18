@@ -55,7 +55,7 @@ CarrotQueue is a Push-Pull Message Queue written in Java
 3. The server will receive the message and process it (via a `RequestParser` instance).
 4. The server will internally manage its inner queues (via a `QueueMaster` instance), based on the client's message type (and other parameters mentioned in the message header). This means, the server can either internally create a new queue, add messages to an existent one, poll a queue for messages, or delete a queue.
 5. The server will then manage the client's request via the **RabbitMQ** API. If, at the previous step, a new queue is internally created, it will also be created in the RabbitMQ instance. If a message is sent, RabbitMQ will also be sent the same message. If a queue is deleted, the RabbitMQ corresponding queue (based on the provided ID) will also be deleted. If a message is polled from the queue, the latest message will also be deleted in the corresponding RabbitMQ queue.
-6. The server will send an **acknowledgement** to the client. This means, the client will either receive `SUCCESS` (byte 0) or `ERROR` (byte 1), and a further `RESPONSE_MESSAGE` consisting of an arbitrary number of bytes, null-terminated.
+6. The server will send an **acknowledgement** to the client (processed via `ResponseParser`). This means, the client will either receive `SUCCESS` (byte 0) or `ERROR` (byte 1), and a further `RESPONSE_MESSAGE` consisting of an arbitrary number of bytes, null-terminated.
 7. The client-server connection will be ended.
 
 ### Concurrency Issues

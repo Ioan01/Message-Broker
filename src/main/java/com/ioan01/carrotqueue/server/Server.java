@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class Server implements IServer {
     private static Logger logger = LoggerFactory.getLogger(Server.class);
@@ -20,10 +22,12 @@ public class Server implements IServer {
     private int port;
     private ServerSocket serverSocket;
     private QueueMaster queueMaster;
+    private ThreadPoolExecutor threadPoolExecutor;
 
     public Server(int port) {
         this.port = port;
         queueMaster = new QueueMaster();
+        threadPoolExecutor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
     }
 
     /**
@@ -49,7 +53,8 @@ public class Server implements IServer {
             logger.info("Waiting for new connections...");
             Socket clientSocket = serverSocket.accept();
             logger.info("Received connection. Creating a new thread and redirecting socket...");
-            Thread thread = new Thread(new Runnable() {
+
+            threadPoolExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -59,7 +64,7 @@ public class Server implements IServer {
                     }
                 }
             });
-            thread.start();
+
             logger.info("Successfully redirected socket.");
         }
     }
